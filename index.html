@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MapExplorer</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+    .zoom-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+    }
+    .zoom-button {
+      background-color: #00BFFF;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 5px;
+      transition: background-color 0.3s;
+    }
+    .zoom-button:hover {
+      background-color: #0077B3;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="zoom-controls">
+    <button class="zoom-button" id="zoom-in">Zoom In</button>
+    <button class="zoom-button" id="zoom-out">Zoom Out</button>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Initialize the map
+    const map = L.map('map').setView([51.505, -0.09], 13);
+
+    // Set the tile layer for the map background
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Add a marker to the map (initially centered)
+    const marker = L.marker([51.505, -0.09], {
+      icon: L.divIcon({
+        className: 'leaflet-div-icon',
+        html: '<div style="background-color: #FF3D00; width: 20px; height: 20px; border-radius: 50%;"></div>',
+        iconSize: [20, 20]
+      })
+    }).addTo(map);
+
+    // Add a click event listener to the map to add markers where clicked
+    map.on('click', function(e) {
+      const clickedLatLng = e.latlng;
+      
+      // Create a new marker at the clicked location
+      const newMarker = L.marker(clickedLatLng, {
+        icon: L.divIcon({
+          className: 'leaflet-div-icon',
+          html: '<div style="background-color: #FF3D00; width: 20px; height: 20px; border-radius: 50%;"></div>',
+          iconSize: [20, 20]
+        })
+      }).addTo(map);
+
+      // Bind a popup to the new marker showing the coordinates
+      newMarker.bindPopup(`You clicked at: ${clickedLatLng.lat.toFixed(4)}, ${clickedLatLng.lng.toFixed(4)}`).openPopup();
+    });
+
+    // Zoom in and out buttons
+    document.getElementById('zoom-in').addEventListener('click', () => {
+      map.zoomIn();
+    });
+
+    document.getElementById('zoom-out').addEventListener('click', () => {
+      map.zoomOut();
+    });
+  </script>
+</body>
+</html>
